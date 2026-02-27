@@ -1,62 +1,61 @@
-"use client";
+]"use client";
 
-import { useEffect, useState } from "react";
-import Prism from "prismjs";
-import { marked } from "marked";
+import { useMemo, useState } from "react";
+import dynamic from "next/dynamic";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypePrism from "rehype-prism-plus";
 
-import "prismjs/themes/prism-tomorrow.css";
-import "prismjs/components/prism-javascript";
-import "prismjs/components/prism-typescript";
-import "prismjs/components/prism-bash";
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 export default function Editor({
   content,
   onChange,
 }: {
   content: string;
-  onChange: (value: string) => void;
+  onChange: (v: string) => void;
 }) {
-  const [html, setHtml] = useState<string>("");
-
-  // ✅ marked가 string | Promise<string>을 반환할 수 있으니 await로 string 보장
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const parsed = await marked.parse(content || "");
-        if (!cancelled) setHtml(parsed);
-      } catch {
-        // 파싱 실패 시 안전하게 빈 문자열
-        if (!cancelled) setHtml("");
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [content]);
-
-  // ✅ HTML이 업데이트된 뒤 하이라이팅이 적용되도록 html을 의존성으로
-  useEffect(() => {
-    Prism.highlightAll();
-  }, [html]);
+  const [tab, setTab] = useState<"edit" | "preview">("edit");
+  const md = useMemo(() => content ?? "", [content]);
 
   return (
-    // ✅ 모바일 반응형: 작은 화면은 1열, md 이상은 2열
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-      {/* ✍️ 입력 영역 */}
-      <textarea
-        value={content}
-        onChange={(e) => onChange(e.target.value)}
-        className="bg-gray-900 text-white p-4 rounded-lg min-h-[320px] md:min-h-[500px]"
-      />
+    <div className="mt-4 rounded-2xl border border-cyan-400/20 bg-black/30 overflow-hidden">
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-white/10">
+        <button
+          onClick={() => setTab("edit")}
+          className={`px-3 py-1.5 rounded-lg text-sm ${
+            tab === "edit" ? "bg-cyan-500 text-white" : "bg-white/10 text-gray-200"
+          }`}
+        >
+          편집
+        </button>
+        <button
+          onClick={() => setTab("preview")}
+          className={`px-3 py-1.5 rounded-lg text-sm ${
+            tab === "preview" ? "bg-cyan-500 text-white" : "bg-white/10 text-gray-200"
+          }`}
+        >
+          미리보기
+        </button>
 
-      {/* 👀 미리보기 */}
-      <div
-        className="prose prose-invert max-w-none bg-gray-950 p-4 rounded-lg overflow-auto"
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+        <div className="ml-auto text-xs text-gray-400">
+          Markdown 편집 + 코드 하이라이팅 프리뷰
+        </div>
+      </div>
+
+      <div className="p-3">
+        {tab === "edit" ? (
+          <div data-color-mode="dark">
+            <MDEditor value={md} onChange={(v) => onChange(v ?? "")} height={320} />
+          </div>
+        ) : (
+          <div className="prose prose-invert max-w-none">
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypePrism]}>
+              {md}
+            </ReactMarkdown>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

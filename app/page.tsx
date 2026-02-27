@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Navbar from "./components/Navbar";
 import Editor from "./components/Editor";
 
-// ✅ [추가] Markdown → HTML 변환용
+
 import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
@@ -13,7 +13,6 @@ import rehypeStringify from "rehype-stringify";
 
 type StylePreset = "tutorial" | "til" | "troubleshooting" | "deepdive";
 
-/** ✅ [추가] Markdown 텍스트만 뽑아서 SEO meta 만들기 */
 function stripMarkdown(md: string) {
   return md
     .replace(/```[\s\S]*?```/g, " ")
@@ -25,7 +24,7 @@ function stripMarkdown(md: string) {
     .trim();
 }
 
-/** ✅ [추가] SEO meta description 자동 생성 (150~160자) */
+
 function generateMetaDescription(markdown: string, maxLen = 160) {
   const text = stripMarkdown(markdown);
   if (!text) return "";
@@ -41,7 +40,6 @@ function generateMetaDescription(markdown: string, maxLen = 160) {
   return base;
 }
 
-/** ✅ [추가] 스타일 템플릿을 글 상단에 주입(로컬 방식) */
 function applyStyleTemplate(md: string, preset: StylePreset) {
   const headerByPreset: Record<StylePreset, string> = {
     tutorial:
@@ -122,7 +120,7 @@ function applyStyleTemplate(md: string, preset: StylePreset) {
 `,
   };
 
-  // 이미 스타일 헤더가 있으면 중복 주입 방지
+
   if (md.startsWith("<!-- STYLE:")) return md;
 
   return headerByPreset[preset] + "\n\n" + md;
@@ -140,10 +138,10 @@ export default function Home() {
   const [result, setResult] = useState("");
   const [user, setUser] = useState<any>(null);
 
-  // ✅ [추가] result 바뀌면 meta 자동 생성
+ 
   const meta = useMemo(() => generateMetaDescription(result), [result]);
 
-  // ✅ 기존 테마 맵 유지
+
   const mbtiThemes: any = {
     INTJ: "planet-purple",
     ENFP: "planet-orange",
@@ -162,7 +160,7 @@ export default function Home() {
     }
   }, []);
 
-  /** ✅ 기존 generateBlog 유지 (OpenAI API 라우트 호출) */
+
   const generateBlog = async () => {
     try {
       setLoading(true);
@@ -200,13 +198,13 @@ export default function Home() {
     }
   };
 
-  /** ✅ [추가] 스타일 적용 버튼 핸들러 */
+
   const onApplyStyle = () => {
     if (!result) return;
     setResult((prev) => applyStyleTemplate(prev, template));
   };
 
-  /** ✅ [추가] 클립보드 복사 */
+
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -220,7 +218,7 @@ export default function Home() {
     }
   };
 
-  /** ✅ [추가] 파일 다운로드(Blob) */
+  
   const downloadFile = (filename: string, content: string, mime: string) => {
     const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
@@ -233,7 +231,6 @@ export default function Home() {
     URL.revokeObjectURL(url);
   };
 
-  /** ✅ [추가] Markdown → HTML 변환 */
   const markdownToHtml = async (markdown: string) => {
     const file = await unified()
       .use(remarkParse)
@@ -245,7 +242,7 @@ export default function Home() {
     return String(file);
   };
 
-  /** ✅ [추가] HTML 다운로드용 문서 래핑(메타 포함) */
+ 
   const buildHtmlDocument = (docTitle: string, bodyHtml: string, metaDesc: string) => {
     const safeTitle = docTitle || "Blog Post";
     const safeMeta = (metaDesc || "").replaceAll('"', "&quot;");
@@ -263,7 +260,7 @@ ${bodyHtml}
 </html>`;
   };
 
-  // ✅ 파일명 안전 처리(간단)
+ 
   const baseFileName = (title || topic || "post").replace(/[\\/:*?"<>|]/g, "-").trim();
 
   return (
@@ -271,10 +268,10 @@ ${bodyHtml}
       <Navbar />
 
       <main className="min-h-screen bg-black text-white flex items-center justify-center relative overflow-hidden px-3 md:px-0">
-        {/* 행성 */}
+        {/* */}
         <div className={`planet ${themeClass}`}></div>
 
-        {/* ✅ [변경] 모바일에서 높이/폭 반응형 */}
+        {/*모바일에서 높이/폭 반응형 */}
         <div className="relative w-full max-w-5xl h-[92vh] md:h-[720px] bg-white/5 backdrop-blur-md border border-cyan-400/40 rounded-3xl shadow-2xl">
           <div className="absolute top-0 left-0 right-0 h-16 flex items-center justify-between px-4 md:px-6 border-b border-cyan-400/20">
             <div className="text-cyan-300 font-bold">🚀 AI COMMAND CONSOLE</div>
@@ -284,7 +281,7 @@ ${bodyHtml}
           </div>
 
           <div className="absolute top-20 left-0 right-0 bottom-6 flex items-center justify-center">
-            {/* ✅ [변경] 모바일에서 w-full */}
+            {/*  [변경] 모바일에서 w-full */}
             <div className="w-full md:w-4/5 h-full bg-black/40 rounded-2xl border border-cyan-400/30 p-4 md:p-6 overflow-auto">
               <div className="flex flex-col gap-4">
                 <input
@@ -300,10 +297,9 @@ ${bodyHtml}
                   placeholder="키워드 입력 (쉼표로 구분)"
                   className="p-3 rounded bg-gray-800"
                 />
-
-                {/* ✅ [변경] 모바일 반응형 버튼/셀렉트 레이아웃 */}
+                {/*   */}
                 <div className="flex flex-col md:flex-row gap-3 md:items-center">
-                  {/* ✅ [확장] 스타일 옵션 4종 */}
+                  {/*   */}
                   <select
                     value={template}
                     onChange={(e) => setTemplate(e.target.value as StylePreset)}
@@ -339,10 +335,10 @@ ${bodyHtml}
                     <p className="text-cyan-400 animate-pulse">🚀 에너지 생성 중...</p>
                   ) : result ? (
                     <>
-                      {/* ✅ Editor로 마크다운 편집(기존 구조 유지) */}
+                      {/*  */}
                       <Editor content={result} onChange={setResult} />
 
-                      {/* ✅ [추가] 다운로드/복사 기능 버튼들 */}
+                      {/*  */}
                       <div className="mt-4 flex flex-col md:flex-row gap-2 md:items-center">
                         <button
                           onClick={() =>
@@ -406,7 +402,7 @@ ${bodyHtml}
                         </button>
                       </div>
 
-                      {/* ✅ [추가] SEO Meta Description 표시 */}
+                      {/*   */}
                       <div className="mt-5 p-4 rounded-2xl border border-cyan-400/20 bg-black/30">
                         <div className="flex items-center justify-between">
                           <div className="text-cyan-200 font-semibold">
@@ -424,7 +420,7 @@ ${bodyHtml}
                         />
                       </div>
 
-                      {/* (옵션) 타이틀/해시태그 표시 */}
+                      {/* */}
                       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div className="p-4 rounded-2xl border border-cyan-400/20 bg-black/30">
                           <div className="text-cyan-200 font-semibold">Title</div>

@@ -24,3 +24,113 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* 우주 별 애니메이션 */
+@keyframes starsMove {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-2000px);
+  }
+}
+
+/* 작은 별 */
+.stars-small {
+  position: fixed;
+  width: 2px;
+  height: 2px;
+  background: white;
+  box-shadow:
+    50px 200px white,
+    150px 400px white,
+    300px 800px white,
+    500px 1200px white,
+    700px 600px white,
+    900px 300px white,
+    1100px 900px white,
+    1300px 500px white,
+    1500px 1000px white,
+    1700px 700px white,
+    1900px 400px white,
+    2100px 1200px white,
+    2300px 800px white,
+    2500px 600px white,
+    2700px 300px white;
+  animation: starsMove 120s linear infinite;
+}
+
+/* 중간 별 */
+.stars-medium {
+  position: fixed;
+  width: 3px;
+  height: 3px;
+  background: white;
+  box-shadow:
+    200px 500px white,
+    400px 900px white,
+    800px 300px white,
+    1000px 700px white,
+    1400px 1100px white,
+    1800px 600px white,
+    2200px 400px white,
+    2600px 1000px white;
+  animation: starsMove 80s linear infinite;
+}
+
+/* 큰 별 */
+.stars-large {
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  background: white;
+  box-shadow:
+    300px 200px white,
+    900px 500px white,
+    1500px 900px white,
+    2100px 300px white;
+  animation: starsMove 60s linear infinite;
+}
+
+/* ===== MBTI 행성 테마 ===== */
+
+.planet {
+  position: absolute;
+  bottom: 50px;
+  right: 80px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+.planet-purple {
+  background: radial-gradient(circle, #a855f7, #4c1d95);
+}
+
+.planet-orange {
+  background: radial-gradient(circle, #fb923c, #7c2d12);
+}
+
+.planet-blue {
+  background: radial-gradient(circle, #60a5fa, #1e3a8a);
+}
+
+.planet-indigo {
+  background: radial-gradient(circle, #818cf8, #312e81);
+}
+
+.planet-red {
+  background: radial-gradient(circle, #f87171, #7f1d1d);
+}
+
+.planet-cyan {
+  background: radial-gradient(circle, #22d3ee, #164e63);
+}
+
+pre[class*="language-"] {
+  background: rgba(0, 0, 0, 0.7) !important;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 0 20px rgba(0,255,255,0.4);
+}

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Editor from "./components/Editor"
+import Editor from "../components/Editor";
 
 
 export default function Login() {
